@@ -34,7 +34,9 @@ or, from a clone of this repo:
 ```
 
 Then open the panel at **http://localhost:8080** (Superset's own UI is on
-**http://localhost:8090**). The installer writes the stack to `venapce/` so you
+**http://localhost:8090**). On Windows, use [the PowerShell
+one-liner](#windows) instead — it puts WSL 2 and Docker Desktop in place first,
+then runs this same script inside WSL. The installer writes the stack to `venapce/` so you
 can manage it by hand afterwards:
 
 ```bash
@@ -50,6 +52,68 @@ full list) — for example:
 ```bash
 FLOMORPHIC_MODE=existing FLOMORPHIC_JWT_SECRET=… ASSUME_YES=1 ./install.sh
 ```
+
+### Windows
+
+Venapce is containers, and Docker on Windows is Docker Desktop on the WSL 2
+backend — so the prerequisite is not just Docker, it is Docker *and* the Linux
+environment it runs in. [`install.ps1`](https://github.com/Venapce/getting-started/blob/main/install.ps1) is that part. Run it from a
+normal PowerShell:
+
+```powershell
+irm https://raw.githubusercontent.com/Venapce/getting-started/main/install.ps1 | iex
+```
+
+It is not a port of `install.sh` — it is the step before it. It checks the host,
+asks before it installs anything, and then runs the very same `install.sh` inside
+WSL, so Windows and Linux end up with one stack from one source of truth:
+
+| Step | What it does |
+| --- | --- |
+| **Windows** | build (19041+), architecture, and a warning when virtualization is off in firmware — the classic silent WSL 2 failure |
+| **WSL 2** | installs it with your consent (`wsl --install`), installs Ubuntu if there is no distro, converts a WSL 1 distro, tells you when a reboot is needed |
+| **Docker Desktop** | installs it with your consent (winget, else the installer from docker.com), starts it, waits for the engine, and walks you through **Settings → Resources → WSL integration** when the engine is up on Windows but invisible inside the distro |
+| **`install.sh`** | runs it in the distro, forwarding every installer env var you set in PowerShell |
+
+Installing WSL or Docker Desktop needs administrator rights; the script asks
+before relaunching itself elevated. A fresh WSL install usually wants a reboot —
+re-run the same one-liner afterwards and it carries on.
+
+The stacks land in the distro's own filesystem (`~/venapce` by default), **not**
+on `C:`. The stack keeps Postgres (and a FloMorphic SQLite database, when it installs one) in bind mounts, and database file locking over the `/mnt/c` bridge is slow and prone to corruption. Explorer still reaches it:
+
+```powershell
+explorer.exe \\wsl$\Ubuntu\home\<you>\venapce
+wsl -d Ubuntu --cd ~/venapce            # a shell where docker compose works
+```
+
+Docker Desktop publishes the ports to Windows, so **http://localhost:8080** works in your Windows
+browser with nothing else to configure. Keep Docker Desktop running — the stack
+stops and starts with its engine.
+
+Env vars work the same way, as PowerShell env vars; `-Yes` (or `ASSUME_YES=1`)
+makes the whole thing unattended:
+
+```powershell
+$env:FLOMORPHIC_MODE = 'new'; $env:ASSUME_YES = '1'
+irm https://raw.githubusercontent.com/Venapce/getting-started/main/install.ps1 | iex
+```
+
+To pass parameters (`-Distro`, `-InstallDir`, `-Ref`, `-NoInstall` to check without
+installing), use the scriptblock form — a bare `irm | iex` cannot take arguments:
+
+```powershell
+& ([scriptblock]::Create((irm https://raw.githubusercontent.com/Venapce/getting-started/main/install.ps1))) -Yes -Distro Ubuntu
+```
+
+> Docker Desktop is Docker Inc.'s product under
+> [its own licence](https://docs.docker.com/subscription/desktop-license/) — free for
+> personal use, education and small businesses; larger companies need a paid
+> subscription. The script only installs it when you say yes.
+
+Already running WSL with Docker Desktop integration on? Then the plain
+`curl ... install.sh | bash` one-liner inside the distro is all you need; if docker
+is missing there, `install.sh` now says which of the two is wrong.
 
 ### Pointing Venapce at FloMorphic later
 
@@ -190,9 +254,9 @@ Panel walkthroughs land here as the menus come to life.
 
 <!-- Replace these once the images are in ./images -->
 <!--
-![Fleet view](images/fleet.png)
-![Issues](images/issues.png)
-![Dashboard builder](images/dashboards.png)
+![Fleet view](https://raw.githubusercontent.com/Venapce/getting-started/main/images/fleet.png)
+![Issues](https://raw.githubusercontent.com/Venapce/getting-started/main/images/issues.png)
+![Dashboard builder](https://raw.githubusercontent.com/Venapce/getting-started/main/images/dashboards.png)
 -->
 
 ## Links
