@@ -15,7 +15,8 @@
 ---
 
 > **Status: in active development.** Venapce is past its feasibility study and being built now.
-> The [getting-started repo](https://github.com/Venapce/getting-started) holds the installer and guide; screenshots and run instructions land here as the panel matures.
+> The [getting-started repo](https://github.com/Venapce/getting-started) holds the installer and guide; the installer below works today, and
+> [the panel is further down](#screenshots).
 
 ## Quick start
 
@@ -250,14 +251,51 @@ panel onto the existing base, so it doesn't recompile Superset.
 
 ## Screenshots
 
-Panel walkthroughs land here as the menus come to life.
+A walk through the panel. The fleet, the rows and the flow runs below are a
+demo environment — the hosts are made up, the screens are not.
 
-<!-- Replace these once the images are in ./images -->
-<!--
+**The fleet.** Enrolled osquery systems as osctrl reports them: platform, address,
+agent version and last check-in, with the environment picker and the enroll flow
+one click away.
+
 ![Fleet view](https://raw.githubusercontent.com/Venapce/getting-started/main/images/fleet.png)
+
+**Stage — the pipeline inbox.** Raw rows as they land, each carrying where its data
+came from (`source`), which process produced it (`origin`) and the documents it
+brought with it. A flow routes each one: *pending*, *promoted*, *held* or *dropped* —
+and a promoted row links to what it became.
+
+![Stage](https://raw.githubusercontent.com/Venapce/getting-started/main/images/stage.png)
+
+**Issues.** The main table: what needs validating, fixing or acting on. Every row is
+tagged rather than typed, so a saved view is just a named tag filter — the four in
+the sidebar are exactly that.
+
 ![Issues](https://raw.githubusercontent.com/Venapce/getting-started/main/images/issues.png)
-![Dashboard builder](https://raw.githubusercontent.com/Venapce/getting-started/main/images/dashboards.png)
--->
+
+**Activities.** Everything that ran, across every table: each flow run with the
+outcome it produced, plus the manual edits and promotions. A run that hit node
+errors and finished anyway says so.
+
+![Activities](https://raw.githubusercontent.com/Venapce/getting-started/main/images/activities.png)
+
+**One run, in full.** A flow executed on one row, with its conclusion lifted into
+typed fields — facts, description, remediation, the proof it rests on — and the
+run's own output document beside them. Judgment applied to one issue, inside a
+graph you drew.
+
+![A flow run's outcome](https://raw.githubusercontent.com/Venapce/getting-started/main/images/activity-run.png)
+
+**Operations.** The feature unit: a package of FloMorphic flows with a manifest,
+its parameters filled in for your estate, a readiness list of what it still needs,
+and the flow it bound on the canvas.
+
+![Operations](https://raw.githubusercontent.com/Venapce/getting-started/main/images/operations.png)
+
+**Visualizations.** Charts built on the pipeline tables themselves and arranged on a
+drag/resize grid — rendered natively, no iframe.
+
+![Dashboards](https://raw.githubusercontent.com/Venapce/getting-started/main/images/dashboards.png)
 
 ## Links
 
