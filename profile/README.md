@@ -157,16 +157,30 @@ The face — Venapce
   Dashboards, fleet view, issues, actions. Posture you can see; a panel you act from.
 ```
 
-## The data model: Stage → Issues
+## The data model: Stage → Findings → Issues
 
-Two tables carry the whole model, with FloMorphic doing the data engineering between them.
+Six tables carry the model, with FloMorphic doing the data engineering between them.
 
 | Table | What it holds |
 | --- | --- |
-| **Stage** | The raw intake — everything the agents collect, including the noise and false positives. |
-| **Issues** | The enriched, real signal FloMorphic promotes: a raised problem, a fix, a security incident. |
+| **Stage** | The pipeline inbox — raw, un-triaged rows as the agents and flows deliver them, noise and false positives included. A flow routes each one: *pending*, *promoted*, *held* or *dropped*. |
+| **Findings** | What a process concluded from data: an observation with a severity, a confidence, a category and a target — still to be validated. |
+| **Issues** | The main table: what needs validating, fixing, a mission, or otherwise acting on. |
+| **Activities** | The history of every row above — each flow run with the outcome it produced, and every manual edit and promotion. |
+| **Operations** | Installed packages of flows: the feature unit, with its manifest, its parameters and the FloMorphic flows it bound. |
+| **Views** | A saved view — a named tag filter over any of the tables above, which the sidebar carries as its own entry. |
 
-Over both sits a **full BI chart and dashboard builder** — every chart drawn on data that came from
+The three pipeline levels are **optional, not a sequence**. A flow — the expert user's own
+rules — decides where a row lands: raw data usually arrives on Stage, a later process turns it
+into a Finding when it shows some aspect worth tracking, and a Finding that needs validating or
+fixing becomes an Issue. But a flow may just as well write straight to Findings or Issues.
+Nothing forces the order; the levels are there to see and evaluate data at three depths.
+
+Rows are **tagged rather than typed** — rather than a table per issue kind, every row carries tags,
+and a saved view is just a tag filter over them. That is how an operator adds a submenu without
+anyone adding a table.
+
+Over all of it sits a **full BI chart and dashboard builder** — every chart drawn on data that came from
 FloMorphic. Posture isn't a fixed set of screens; you build the views you need.
 
 ## The assistant
